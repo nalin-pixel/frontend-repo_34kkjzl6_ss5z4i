@@ -1,5 +1,5 @@
 import React from 'react';
-import { HashRouter, Routes, Route, Link } from 'react-router-dom';
+import { HashRouter, Routes, Route, Link, Navigate } from 'react-router-dom';
 import Hero from './components/Hero';
 import ProjectsSkills from './components/ProjectsSkills';
 import GuestBoard from './components/GuestBoard';
@@ -51,6 +51,8 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/game" element={<GamePage />} />
+          {/* Fallbacks to ensure no blank page on unknown hash paths */}
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </div>
     </HashRouter>

@@ -14,7 +14,7 @@ const Hero = () => {
       {/* 3D Spline Scene as full-bleed background */}
       <div className="absolute inset-0">
         <Spline
-          scene="https://prod.spline.design/7m4PRZ7kg6K1jPfF/scene.splinecode"
+          scene="https://prod.spline.design/igThmltzmqv5hkWo/scene.splinecode"
           style={{ width: '100%', height: '100%' }}
         />
       </div>
@@ -80,7 +80,7 @@ const Hero = () => {
                 </button>
                 <div className="hidden sm:flex items-center gap-2 text-white/60">
                   <MousePointerClick className="h-4 w-4" />
-                  <span>Drag the scene</span>
+                  <span>Interact with the scene</span>
                 </div>
               </motion.div>
             </div>
