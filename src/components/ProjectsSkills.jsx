@@ -2,10 +2,10 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { ExternalLink } from 'lucide-react';
 
-// Utility to parse a minimal set of games from an itch.io profile page using a CORS-friendly reader
-// Primary source: r.jina.ai proxy of the public page (read-only, no keys). Fallback to curated list.
-const useItchProjects = () => {
-  const [items, setItems] = useState([]);
+// Lightweight reader for itch.io links only (no thumbnails)
+// Uses a public read-only proxy for CORS, then extracts project URLs.
+const useItchProjectLinks = () => {
+  const [links, setLinks] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -15,67 +15,26 @@ const useItchProjects = () => {
         const res = await fetch('https://r.jina.ai/http://zidandev.itch.io/');
         const text = await res.text();
         if (!mounted) return;
-        // crude parsing: find blocks like https://zidandev.itch.io/<slug> and thumbnails https://img.itch.zone/... .jpg/.png
+        // Find links like https://zidandev.itch.io/<slug>
         const linkRegex = /https?:\/\/zidandev\.itch\.io\/[a-z0-9-]+/gi;
-        const imgRegex = /https?:\\/\\/img\.itch\.zone\\/.*?\.(?:png|jpg|jpeg|webp)/gi;
-        const titleRegex = /<h2[^>]*>(.*?)<\\/h2>/gi;
-
-        const links = Array.from(new Set(text.match(linkRegex) || []));
-        const imgs = Array.from(new Set(text.match(imgRegex) || []));
-        const titlesRaw = [];
-        let m;
-        // Extract a few H2 titles (best-effort)
-        while ((m = titleRegex.exec(text)) !== null) {
-          const t = m[1].replace(/<[^>]*>/g, '').trim();
-          if (t && t.length < 120) titlesRaw.push(t);
-        }
-
-        const combined = links.slice(0, 6).map((href, i) => ({
-          link: href,
-          img: imgs[i] || imgs[0],
-          title: titlesRaw[i] || href.replace('https://zidandev.itch.io/', '').replace(/-/g, ' '),
-          desc: 'Play on itch.io',
-        }));
-
-        if (combined.length) {
-          setItems(combined);
+        const found = Array.from(new Set(text.match(linkRegex) || []));
+        if (found.length) {
+          setLinks(found.slice(0, 9));
         } else {
-          throw new Error('No parsed items');
+          // Fallback: just the profile page
+          setLinks(['https://zidandev.itch.io/']);
         }
       } catch (e) {
-        // Fallback curated entries with direct links
-        setItems([
-          {
-            title: "That’s Trash",
-            desc: 'A quirky indie experiment about turning chaos into playful mechanics.',
-            img: 'https://images.unsplash.com/photo-1546443046-ed1ce6ffd1ab?q=80&w=1400&auto=format&fit=crop',
-            link: 'https://zidandev.itch.io/',
-          },
-          {
-            title: '2D Frits',
-            desc: 'A crisp 2D platformer prototype focused on feel, flow, and frames.',
-            img: 'https://images.unsplash.com/photo-1538481199705-c710c4e965fc?q=80&w=1400&auto=format&fit=crop',
-            link: 'https://zidandev.itch.io/',
-          },
-          {
-            title: 'Snake Snike',
-            desc: 'A modern neon twist on a retro classic with juicy FX and shape language.',
-            img: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=1400&auto=format&fit=crop',
-            link: 'https://zidandev.itch.io/',
-          },
-        ]);
+        setLinks(['https://zidandev.itch.io/']);
       } finally {
         if (mounted) setLoading(false);
       }
     };
-
     load();
-    return () => {
-      mounted = false;
-    };
+    return () => { mounted = false; };
   }, []);
 
-  return { items, loading };
+  return { links, loading };
 };
 
 const skills = [
@@ -103,9 +62,16 @@ const Progress = ({ label, value }) => (
 );
 
 const ProjectsSkills = () => {
-  const { items, loading } = useItchProjects();
+  const { links, loading } = useItchProjectLinks();
 
-  const gridItems = useMemo(() => items.slice(0, 6), [items]);
+  const items = useMemo(() => {
+    // Map links to simple title from slug
+    return links.map((href) => {
+      const slug = href.replace('https://zidandev.itch.io/', '').replace(/\/$/, '');
+      const title = slug ? slug.replace(/-/g, ' ') : 'Visit my itch.io';
+      return { href, title: title || 'Visit my itch.io' };
+    });
+  }, [links]);
 
   return (
     <section id="works" className="relative w-full bg-[#07081A] text-white">
@@ -127,33 +93,37 @@ const ProjectsSkills = () => {
         {loading ? (
           <div className="text-white/70">Loading projects…</div>
         ) : (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {gridItems.map((p, i) => (
-              <motion.a
-                key={(p.link || '') + i}
-                href={p.link}
+          <>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {items.map((p, i) => (
+                <motion.a
+                  key={p.href + i}
+                  href={p.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  initial={{ opacity: 0, y: 16 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.45, delay: i * 0.04 }}
+                  className="group flex items-center justify-between rounded-xl border border-white/10 bg-white/5 p-4 backdrop-blur-xl hover:bg-white/10 transition"
+                >
+                  <span className="capitalize">{p.title}</span>
+                  <ExternalLink className="h-4 w-4 text-white/60 group-hover:text-white transition" />
+                </motion.a>
+              ))}
+            </div>
+
+            <div className="mt-6">
+              <a
+                href="https://zidandev.itch.io/"
                 target="_blank"
                 rel="noreferrer"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.05 }}
-                className="group overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl"
+                className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-violet-500 to-cyan-400 px-5 py-2 text-[#07081A] font-medium shadow-[0_0_18px_rgba(139,92,246,0.6)] hover:brightness-110 transition"
               >
-                <div className="relative aspect-video overflow-hidden">
-                  <img src={p.img} alt={p.title} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
-                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#07081A]/60 via-transparent to-transparent" />
-                </div>
-                <div className="p-4">
-                  <div className="flex items-center justify-between">
-                    <h3 className="font-semibold capitalize">{p.title}</h3>
-                    <ExternalLink className="h-4 w-4 text-white/60 group-hover:text-white transition" />
-                  </div>
-                  <p className="mt-1 text-sm text-white/70">{p.desc || 'View project on itch.io'}</p>
-                </div>
-              </motion.a>
-            ))}
-          </div>
+                Visit my itch.io profile <ExternalLink className="h-4 w-4" />
+              </a>
+            </div>
+          </>
         )}
 
         <motion.h2
