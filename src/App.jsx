@@ -1,14 +1,16 @@
 import React from 'react';
 import Hero from './components/Hero';
-import AboutContact from './components/AboutContact';
-import ProjectsAwards from './components/ProjectsAwards';
+import ProjectsSkills from './components/ProjectsSkills';
 import GuestBoard from './components/GuestBoard';
+import AboutContact from './components/AboutContact';
+import SpaceShot from './components/SpaceShot';
 
 function App() {
   return (
     <div className="min-h-screen bg-[#07081A] text-white font-inter">
       <Hero />
-      <ProjectsAwards />
+      <ProjectsSkills />
+      <SpaceShot />
       <GuestBoard />
       <AboutContact />
       <footer id="contact" className="bg-[#07081A] border-t border-white/10">
