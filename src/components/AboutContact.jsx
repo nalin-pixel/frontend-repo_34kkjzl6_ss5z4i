@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Mail, Github, Linkedin, Globe, Music2, Pause } from 'lucide-react';
+import { Mail, Github, Globe, Music2, Pause, PlayCircle, MessageSquare } from 'lucide-react';
 
 const AboutContact = () => {
   const [musicOn, setMusicOn] = useState(false);
@@ -50,17 +50,20 @@ const AboutContact = () => {
           <h2 className="text-2xl sm:text-3xl font-bold mb-4">Contact</h2>
           <div className="grid gap-4">
             <div className="flex flex-wrap gap-3">
-              <a href="mailto:zidane@example.com" className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm ring-1 ring-white/15 hover:bg-white/15 transition">
+              <a href="mailto:zidaneachmadnurjayyin@gmail.com" className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm ring-1 ring-white/15 hover:bg-white/15 transition">
                 <Mail className="h-4 w-4 text-violet-300" /> Email
               </a>
-              <a href="https://github.com/" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm ring-1 ring-white/15 hover:bg-white/15 transition">
+              <a href="https://github.com/Zidandev" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm ring-1 ring-white/15 hover:bg-white/15 transition">
                 <Github className="h-4 w-4 text-violet-300" /> GitHub
               </a>
-              <a href="https://itch.io/" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm ring-1 ring-white/15 hover:bg-white/15 transition">
+              <a href="https://zidandev.itch.io/" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm ring-1 ring-white/15 hover:bg-white/15 transition">
                 <Globe className="h-4 w-4 text-violet-300" /> itch.io
               </a>
-              <a href="https://linkedin.com/" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm ring-1 ring-white/15 hover:bg-white/15 transition">
-                <Linkedin className="h-4 w-4 text-violet-300" /> LinkedIn
+              <a href="https://youtube.com/@zidaneangamer8?si=79Uop8CcqyPQGNor" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm ring-1 ring-white/15 hover:bg-white/15 transition">
+                <PlayCircle className="h-4 w-4 text-violet-300" /> YouTube
+              </a>
+              <a href="https://discord.com/invite/cbRTEcVCAR" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm ring-1 ring-white/15 hover:bg-white/15 transition">
+                <MessageSquare className="h-4 w-4 text-violet-300" /> Discord
               </a>
             </div>
 
